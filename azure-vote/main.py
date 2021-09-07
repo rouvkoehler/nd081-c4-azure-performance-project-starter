@@ -25,17 +25,44 @@ from opencensus.ext.flask.flask_middleware import FlaskMiddleware
 
 # Logging
 #logger = # TODO: Setup logger
+logger = logging.getLogger(__name__)
+handler = AzureLogHandler(connection_string='InstrumentationKey=6303f8f7-05cd-4c10-b08b-1b33b38bb397')
+handler.setFormatter(logging.Formatter('%(traceId)s %(spanId)s %(message)s'))
+logger.addHandler(handler)
+# Logging custom Events 
+logger.addHandler(AzureEventHandler(connection_string='InstrumentationKey=6303f8f7-05cd-4c10-b08b-1b33b38bb397'))
+# Set the logging level
+logger.setLevel(logging.INFO)
 
 # Metrics
+stats = stats_module.stats
+view_manager = stats.view_manager
+
+config_integration.trace_integrations(['logging'])
+config_integration.trace_integrations(['requests'])
+
 #exporter = # TODO: Setup exporter
+exporter = metrics_exporter.new_metrics_exporter(
+enable_standard_metrics=True,
+connection_string='InstrumentationKey=6303f8f7-05cd-4c10-b08b-1b33b38bb397')
+view_manager.register_exporter(exporter)
 
 # Tracing
 #tracer = # TODO: Setup tracer
+tracer = Tracer(
+ exporter=AzureExporter(
+     connection_string='InstrumentationKey=6303f8f7-05cd-4c10-b08b-1b33b38bb397'),
+ sampler=ProbabilitySampler(1.0),
+)
 
 app = Flask(__name__)
 
 # Requests
 #middleware = # TODO: Setup flask middleware
+middleware = FlaskMiddleware(
+    app,
+    exporter=AzureExporter(connection_string="InstrumentationKey=6303f8f7-05cd-4c10-b08b-1b33b38bb397"),
+    sampler=ProbabilitySampler(rate=1.0))
 
 # Load configurations from environment or config file
 app.config.from_pyfile('config_file.cfg')
@@ -74,9 +101,12 @@ def index():
         # Get current values
         vote1 = r.get(button1).decode('utf-8')
         # TODO: use tracer object to trace cat vote
+        with tracer.span(name="Cats Vote") as span:
+            print("Cats Vote")
         vote2 = r.get(button2).decode('utf-8')
         # TODO: use tracer object to trace dog vote
-
+        with tracer.span(name="Dogs Vote") as span:
+            print("Dogs Vote")
         # Return index with values
         return render_template("index.html", value1=int(vote1), value2=int(vote2), button1=button1, button2=button2, title=title)
 
@@ -90,11 +120,13 @@ def index():
             vote1 = r.get(button1).decode('utf-8')
             properties = {'custom_dimensions': {'Cats Vote': vote1}}
             # TODO: use logger object to log cat vote
-
+            logger.info('Cats Vote', extra=properties)
+            
             vote2 = r.get(button2).decode('utf-8')
             properties = {'custom_dimensions': {'Dogs Vote': vote2}}
             # TODO: use logger object to log dog vote
-
+            logger.info('Dogs Vote', extra=properties)
+            
             return render_template("index.html", value1=int(vote1), value2=int(vote2), button1=button1, button2=button2, title=title)
 
         else:
