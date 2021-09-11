@@ -141,7 +141,7 @@ def index():
             vote = request.form['vote']
             r.incr(vote,1)
             
-            print(vote)
+            logger.info(vote)
             
             # Get current values
             vote1 = r.get(button1).decode('utf-8')
