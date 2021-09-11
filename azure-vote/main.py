@@ -26,11 +26,13 @@ from opencensus.ext.flask.flask_middleware import FlaskMiddleware
 # Logging
 #logger = # TODO: Setup logger
 logger = logging.getLogger(__name__)
-handler = AzureLogHandler(connection_string='InstrumentationKey=6303f8f7-05cd-4c10-b08b-1b33b38bb397')
-handler.setFormatter(logging.Formatter('%(traceId)s %(spanId)s %(message)s'))
-logger.addHandler(handler)
+log_handler = AzureLogHandler(connection_string='InstrumentationKey=6303f8f7-05cd-4c10-b08b-1b33b38bb397')
+event_handler = AzureEventHandler(connection_string='InstrumentationKey=6303f8f7-05cd-4c10-b08b-1b33b38bb397')
+#handler.setFormatter(logging.Formatter('%(traceId)s %(spanId)s %(message)s'))
+logger.addHandler(log_handler)
+logger.addHandler(event_handler)
 # Logging custom Events 
-logger.addHandler(AzureEventHandler(connection_string='InstrumentationKey=6303f8f7-05cd-4c10-b08b-1b33b38bb397'))
+#logger.addHandler(AzureEventHandler(connection_string='InstrumentationKey=6303f8f7-05cd-4c10-b08b-1b33b38bb397'))
 # Set the logging level
 logger.setLevel(logging.INFO)
 
@@ -50,10 +52,8 @@ view_manager.register_exporter(exporter)
 # Tracing
 #tracer = # TODO: Setup tracer
 tracer = Tracer(
- exporter=AzureExporter(
-     connection_string='InstrumentationKey=6303f8f7-05cd-4c10-b08b-1b33b38bb397'),
- sampler=ProbabilitySampler(1.0),
-)
+    exporter=AzureExporter(connection_string='InstrumentationKey=6303f8f7-05cd-4c10-b08b-1b33b38bb397'),
+    sampler=ProbabilitySampler(1.0),)
 
 app = Flask(__name__)
 
@@ -138,6 +138,7 @@ def index():
             # Get current values
             vote1 = r.get(button1).decode('utf-8')
             vote2 = r.get(button2).decode('utf-8')
+             
 
             # Return results
             return render_template("index.html", value1=int(vote1), value2=int(vote2), button1=button1, button2=button2, title=title)
