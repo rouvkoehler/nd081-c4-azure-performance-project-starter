@@ -21,7 +21,7 @@ from opencensus.trace import config_integration
 from opencensus.ext.azure.trace_exporter import AzureExporter
 from opencensus.trace.samplers import ProbabilitySampler
 from opencensus.trace.tracer import Tracer
-from applicationinsights import TelemetryClient
+#from applicationinsights import TelemetryClient
 from opencensus.ext.flask.flask_middleware import FlaskMiddleware
 
 # Logging
@@ -55,7 +55,7 @@ view_manager.register_exporter(exporter)
 tracer = Tracer(
     exporter=AzureExporter(connection_string='InstrumentationKey=6303f8f7-05cd-4c10-b08b-1b33b38bb397'),
     sampler=ProbabilitySampler(1.0),)
-telemetry_client = TelemetryClient('6303f8f7-05cd-4c10-b08b-1b33b38bb397')
+#telemetry_client = TelemetryClient('6303f8f7-05cd-4c10-b08b-1b33b38bb397')
 
 app = Flask(__name__)
 
@@ -105,19 +105,19 @@ def index():
         # TODO: use tracer object to trace cat vote
         with tracer.span(name="Cats Vote") as span:
             print("Cats Vote")
-        telemetry_client.track_event("Cats")
-        telemetry_client.flush()
+        #telemetry_client.track_event("Cats")
+        #telemetry_client.flush()
         vote2 = r.get(button2).decode('utf-8')
         # TODO: use tracer object to trace dog vote
         with tracer.span(name="Dogs Vote") as span:
             print("Dogs Vote")
-        telemetry_client.track_event("Dogs")
-        telemetry_client.flush()
+        #telemetry_client.track_event("Dogs")
+        #telemetry_client.flush()
         # Return index with values
         return render_template("index.html", value1=int(vote1), value2=int(vote2), button1=button1, button2=button2, title=title)
-
+    
     elif request.method == 'POST':
-
+    
         if request.form['vote'] == 'reset':
 
             # Empty table and return results
