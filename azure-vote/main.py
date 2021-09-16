@@ -104,15 +104,16 @@ def index():
         vote1 = r.get(button1).decode('utf-8')
         # TODO: use tracer object to trace cat vote
         tracer.span(name="Cats Vote")
-        #with tracer.span(name="Cats Vote") as span:
-        #    print("Cats Vote")
+        with tracer.span(name="Cats Vote") as span:
+            logger.warning("in the Cats span...")
         #telemetry_client.track_event("Cats")
         #telemetry_client.flush()
         vote2 = r.get(button2).decode('utf-8')
         # TODO: use tracer object to trace dog vote
         tracer.span(name="Dogs Vote")
-        #with tracer.span(name="Dogs Vote) "as span:
-        #    print("Dogs Vote")
+        with tracer.span(name="Dogs Vote") as span:
+            logger.warning("in the dogs span...")
+        #telemetry_client.track_event("Cats")
         #telemetry_client.track_event("Dogs")
         #telemetry_client.flush()
         # Return index with values
