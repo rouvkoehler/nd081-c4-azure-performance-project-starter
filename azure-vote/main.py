@@ -27,13 +27,13 @@ from opencensus.ext.flask.flask_middleware import FlaskMiddleware
 # Logging
 #logger = # TODO: Setup logger
 logger = logging.getLogger(__name__)
-log_handler = AzureLogHandler(connection_string='InstrumentationKey=6303f8f7-05cd-4c10-b08b-1b33b38bb397')
-event_handler = AzureEventHandler(connection_string='InstrumentationKey=6303f8f7-05cd-4c10-b08b-1b33b38bb397')
+log_handler = AzureLogHandler(connection_string='InstrumentationKey=2d58c514-2c14-400c-8cd6-af4485a00494')
+event_handler = AzureEventHandler(connection_string='InstrumentationKey=2d58c514-2c14-400c-8cd6-af4485a00494')
 #handler.setFormatter(logging.Formatter('%(traceId)s %(spanId)s %(message)s'))
 logger.addHandler(log_handler)
 logger.addHandler(event_handler)
 # Logging custom Events 
-#logger.addHandler(AzureEventHandler(connection_string='InstrumentationKey=6303f8f7-05cd-4c10-b08b-1b33b38bb397'))
+#logger.addHandler(AzureEventHandler(connection_string='InstrumentationKey=2d58c514-2c14-400c-8cd6-af4485a00494'))
 # Set the logging level
 logger.setLevel(logging.INFO)
 
@@ -47,15 +47,15 @@ config_integration.trace_integrations(['requests'])
 #exporter = # TODO: Setup exporter
 exporter = metrics_exporter.new_metrics_exporter(
 enable_standard_metrics=True,
-connection_string='InstrumentationKey=6303f8f7-05cd-4c10-b08b-1b33b38bb397')
+connection_string='InstrumentationKey=2d58c514-2c14-400c-8cd6-af4485a00494')
 view_manager.register_exporter(exporter)
 
 # Tracing
 #tracer = # TODO: Setup tracer
 tracer = Tracer(
-    exporter=AzureExporter(connection_string='InstrumentationKey=6303f8f7-05cd-4c10-b08b-1b33b38bb397'),
+    exporter=AzureExporter(connection_string='InstrumentationKey=2d58c514-2c14-400c-8cd6-af4485a00494'),
     sampler=ProbabilitySampler(1.0),)
-#telemetry_client = TelemetryClient('6303f8f7-05cd-4c10-b08b-1b33b38bb397')
+#telemetry_client = TelemetryClient('2d58c514-2c14-400c-8cd6-af4485a00494')
 
 app = Flask(__name__)
 
@@ -63,7 +63,7 @@ app = Flask(__name__)
 #middleware = # TODO: Setup flask middleware
 middleware = FlaskMiddleware(
     app,
-    exporter=AzureExporter(connection_string="InstrumentationKey=6303f8f7-05cd-4c10-b08b-1b33b38bb397"),
+    exporter=AzureExporter(connection_string="InstrumentationKey=2d58c514-2c14-400c-8cd6-af4485a00494"),
     sampler=ProbabilitySampler(rate=1.0))
 
 # Load configurations from environment or config file
