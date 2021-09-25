@@ -24,19 +24,6 @@ from opencensus.trace.tracer import Tracer
 #from applicationinsights import TelemetryClient
 from opencensus.ext.flask.flask_middleware import FlaskMiddleware
 
-# Logging
-#logger = # TODO: Setup logger
-logger = logging.getLogger(__name__)
-log_handler = AzureLogHandler(connection_string='InstrumentationKey=2d58c514-2c14-400c-8cd6-af4485a00494')
-event_handler = AzureEventHandler(connection_string='InstrumentationKey=2d58c514-2c14-400c-8cd6-af4485a00494')
-#handler.setFormatter(logging.Formatter('%(traceId)s %(spanId)s %(message)s'))
-logger.addHandler(log_handler)
-logger.addHandler(event_handler)
-# Logging custom Events 
-#logger.addHandler(AzureEventHandler(connection_string='InstrumentationKey=2d58c514-2c14-400c-8cd6-af4485a00494'))
-# Set the logging level
-logger.setLevel(logging.INFO)
-
 # Metrics
 stats = stats_module.stats
 view_manager = stats.view_manager
@@ -44,10 +31,23 @@ view_manager = stats.view_manager
 config_integration.trace_integrations(['logging'])
 config_integration.trace_integrations(['requests'])
 
+# Logging
+#logger = # TODO: Setup logger
+logger = logging.getLogger(__name__)
+log_handler = AzureLogHandler(connection_string='InstrumentationKey=2d58c514-2c14-400c-8cd6-af4485a00494')
+log_handler.setFormatter(logging.Formatter('%(traceId)s %(spanId)s %(message)s'))
+logger.addHandler(log_handler)
+
+# Logging custom Events 
+event_handler = AzureEventHandler(connection_string='InstrumentationKey=2d58c514-2c14-400c-8cd6-af4485a00494')
+logger.addHandler(event_handler)
+# Set the logging level
+logger.setLevel(logging.INFO)
+
 #exporter = # TODO: Setup exporter
 exporter = metrics_exporter.new_metrics_exporter(
-enable_standard_metrics=True,
-connection_string='InstrumentationKey=2d58c514-2c14-400c-8cd6-af4485a00494')
+    enable_standard_metrics=True,
+    connection_string='InstrumentationKey=2d58c514-2c14-400c-8cd6-af4485a00494')
 view_manager.register_exporter(exporter)
 
 # Tracing
